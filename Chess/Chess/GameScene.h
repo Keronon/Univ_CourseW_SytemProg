@@ -15,7 +15,6 @@ public:
 	}
 
 	static void newGame() { instance().newGameImpl(); }
-	static void onStepBack();
 
 	void drawBoard(core::Paint& paint) const override;
 
@@ -32,7 +31,7 @@ public:
 	chess::Board& getBoard() { return board; }
 
 	const chess::Board& getBoard() const override { return board; }
-	chess::Side getPlayerSide() const override { return whiteSide; }
+	chess::Side getPlayerSide() const override { return chess::Side::White; }
 	const std::string& getPlayerName(chess::Side s) const override
 	{
 		return playerNames[s];
@@ -42,7 +41,6 @@ private:
 	GameScene();
 	void newGameImpl();
 
-	chess::Side whiteSide;
 	chess::SideEntries<std::string> playerNames;
 
 	chess::Board board;

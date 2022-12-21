@@ -9,7 +9,6 @@ using namespace core;
 enum Button : int
 {
 	Continue = 0,
-	StepBack,
 	FinishMatch,
 	Options,
 	MainMenu,
@@ -27,7 +26,6 @@ void PauseScene::onReturnFromOptions()
 PauseScene::PauseScene()
 	: MenuScene({
 		ButtonData::makeNormal("Continue"),
-		ButtonData::makeNormal("Step Back"),
 		ButtonData::makeNormal("Finish Match"),
 		ButtonData::makeNormal("Options"),
 		ButtonData::makeNormal("Main Menu"),
@@ -67,10 +65,6 @@ void PauseScene::onButtonSelected(int index)
 	{
 		case Button::Continue:
 			SceneManager::load<GameScene>();
-			break;
-		case Button::StepBack:
-			SceneManager::load<GameScene>();
-			GameScene::onStepBack();
 			break;
 		case Button::FinishMatch:
 			SceneManager::load<GameScene>();

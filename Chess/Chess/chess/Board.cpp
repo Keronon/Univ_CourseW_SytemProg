@@ -38,15 +38,14 @@ namespace chess
 		state.update(pieces);
 	}
 	Board::Board(PromotionCallback promotionCallback,
-		CheckmateCallback checkmateCallback,
-		StalemateCallback stalemateCallback,
-		DrawCallback      drawCallback)
-		: pieces{},
-		promotionCallback(promotionCallback),
-		moveExecutedCallback(nullptr),
-		checkmateCallback(checkmateCallback),
-		stalemateCallback(stalemateCallback),
-		drawCallback(drawCallback)
+		         CheckmateCallback checkmateCallback,
+		         StalemateCallback stalemateCallback,
+		         DrawCallback      drawCallback) : pieces{},
+		         promotionCallback(promotionCallback),
+		         moveExecutedCallback(nullptr),
+		         checkmateCallback(checkmateCallback),
+		         stalemateCallback(stalemateCallback),
+		         drawCallback(drawCallback)
 	{}
 
 	void Board::finishMove(FullMove move)

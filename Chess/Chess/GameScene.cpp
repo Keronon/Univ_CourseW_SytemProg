@@ -28,14 +28,6 @@ void GameScene::onExecutedMove(chess::FullMove m)
 	return;
 }
 
-static void onStepBack()
-{
-	GameScene::onStepBack();
-}
-void GameScene::onStepBack()
-{
-
-}
 void GameScene::onFoundMove(chess::FullMove m)
 {
 	auto& i = instance();
@@ -92,8 +84,6 @@ void GameScene::drawBoard(Paint& paint) const
 }
 void GameScene::moveVert(int dir)
 {
-	if (whiteSide != chess::Side::White)
-		dir *= -1;
 	cursor.y() += dir;
 	if (cursor.y() < 0)
 		cursor.y() = 0;
@@ -123,7 +113,7 @@ bool GameScene::trySelect(chess::Pos pos)
 
 void GameScene::spaceAction()
 {
-	if (board.getCurrentSide() != whiteSide)
+	if (board.getCurrentSide() != chess::Side::White)
 	{
 		deselect();
 		return;
