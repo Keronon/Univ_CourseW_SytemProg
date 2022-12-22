@@ -12,6 +12,7 @@ namespace core
 			throw WinapiError("SelectObject");
 		return res;
 	}
+
 	template<class T>
 	void deleteObject(T t)
 	{
@@ -20,8 +21,7 @@ namespace core
 	}
 
 	Paint::Paint(HDC ogHDC, Point size)
-		: hdc(CreateCompatibleDC(ogHDC)),
-		bounds({ 0,0 }, size)
+		     : hdc(CreateCompatibleDC(ogHDC)), bounds({ 0,0 }, size)
 	{
 		int width = size.x;
 		int height = size.y;
@@ -41,6 +41,7 @@ namespace core
 		bitmap = ::CreateDIBSection(
 			ogHDC, &bmi, DIB_RGB_COLORS,
 			(void**)&data, nullptr, 0);
+
 		if (bitmap == nullptr)
 			throw WinapiError("CreateDIBSection");
 		h.biHeight = height;
@@ -50,6 +51,7 @@ namespace core
 
 		::SetBkMode(hdc, TRANSPARENT);
 	}
+
 	Paint::~Paint() noexcept
 	{
 		selectObject(hdc, oldBitmap);
@@ -64,6 +66,7 @@ namespace core
 	{
 		snap.assign(data, data + byteSize());
 	}
+
 	void Paint::setSnapshot(const std::vector<uint8_t>& snap)
 	{
 		std::memcpy(data, snap.data(), snap.size());
@@ -129,6 +132,7 @@ namespace core
 			dstToSrcRatio = double(srcSize.y) / height;
 		}
 	}
+
 	void Paint::copyToStretched(HDC dst, const StretchData& sd) const
 	{
 		if (!sd.shouldStretch)
@@ -141,6 +145,7 @@ namespace core
 
 		stretchBlt(dst, sd.drawRect, hdc, {}, size());
 	}
+
 	void Paint::copyTo(HDC dst) const
 	{
 		if (!::BitBlt(dst, 0, 0, width(), height(), hdc, 0, 0, SRCCOPY))
@@ -152,11 +157,6 @@ namespace core
 		copyTo(dst.hdc);
 	}
 
-	// Not using a Rect& here is intentional
-	// DrawTextA takes a non const RECT*
-	// (and probably does something with it)
-	//
-	// I don't care about that, so I'll ignore it.
 	void Paint::drawText(Rect r, std::string_view s, UINT format)
 	{
 		RECT winRect = r;
@@ -168,6 +168,7 @@ namespace core
 	{
 		textOut(p.x, p.y, s);
 	}
+
 	void Paint::textOut(int x, int y, std::string_view s)
 	{
 		if (!::TextOutA(hdc, x, y, s.data(), (int)s.length()))
@@ -185,9 +186,9 @@ namespace core
 		HFONT font = ::CreateFontA(
 			size, 0, 0, 0,
 			bold ? FW_BOLD : FW_NORMAL,
-			false,//italic
-			false,//underline
-			false,//strikeout
+			false, // наклонный
+			false, // подчёркнуто
+			false, // зачёркнуто
 			ANSI_CHARSET,
 			OUT_DEFAULT_PRECIS,
 			CLIP_DEFAULT_PRECIS,
@@ -198,6 +199,7 @@ namespace core
 			throw WinapiError("CreateFontA");
 		return selectObject(hdc, font);
 	}
+
 	void Paint::setFont(const char* name, int size, bool bold)
 	{
 		auto f = setFontImpl(name, size, bold);
@@ -208,9 +210,9 @@ namespace core
 	{
 		setPixel({ x, y }, col);
 	}
+
 	void Paint::setPixel(Point p, Color col)
 	{
-		// It's not really an error to go draw of bounds.
 		if (!bounds.contains(p)) return;
 		setPixelUnchecked(p.x, p.y, col);
 	}
@@ -225,8 +227,6 @@ namespace core
 
 	void Paint::fillCircle(Point c, int r, Color col)
 	{
-		// There are exactly 4 pixels at distance r from c
-		// drawing those is kinda ugly
 		int xMin = std::max(0, c.x - r + 1);
 		int yMin = std::max(0, c.y - r + 1);
 
@@ -267,6 +267,7 @@ namespace core
 	{
 		fillRect({ x0, y0, x1, y1 }, col);
 	}
+
 	void Paint::drawRectIn(Rect r, int t, Color col)
 	{
 		fillRect(r.x0(), r.y0(), r.x1(), r.y0() + t, col);
@@ -303,6 +304,7 @@ namespace core
 		};
 		setPixelUnchecked(at(x, y), col);
 	}
+
 	void Paint::setPixelUnchecked(uint8_t* ptr, Color col)
 	{
 		constexpr auto setColor = [](uint8_t* ptr, Color col)
@@ -360,4 +362,4 @@ namespace core
 	{
 		return drawSprite({ x, y }, s, palette, scale);
 	}
-} // namespace core
+}

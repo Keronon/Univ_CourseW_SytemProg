@@ -5,6 +5,9 @@
 
 using namespace core;
 
+/// <summary>
+/// Список кнопок на сцене
+/// </summary>
 enum Button
 {
 	ViewBoard,
@@ -23,9 +26,7 @@ EndGameScene::EndGameScene() : MenuScene(
 			ButtonData::makeSpriteRadio("Rematch"),
 			ButtonData::makeSpriteRadio("Main Menu"),
 			ButtonData::makeSpriteRadio("Quit"),
-		},
-		Mode::Vertical),
-		rects(3)
+		}, Mode::Vertical), rects(3)
 {}
 
 void EndGameScene::onCheckmate(chess::FullMove move, const std::string& msg)

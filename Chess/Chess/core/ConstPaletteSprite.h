@@ -7,8 +7,7 @@
 namespace core
 {
 	/*
-	  By making it a template, the conversion from string array to sprite
-	  is done at compile time.
+	  By making it a template, the conversion from string array to sprite is done at compile time.
 	 */
 	template<size_t Width, size_t Height, const char CharPalette_[]>
 	class ConstPaletteSprite : public PaletteSprite
@@ -99,4 +98,4 @@ namespace core
 			++j;
 		}
 	}
-} // namespace core
+}

@@ -4,19 +4,14 @@
 
 namespace core
 {
-	/*
-	  A scene tells the WindowHandler what to draw and responds
-	  to events like key presses.
-
-	  Examples of scenes: The main menu, the game itself, etc.
-
-	  Note: The background doesn't get reset on scene change,
-	  so we can draw scenes on top of each other.
-	  This can be useful for pop-up menus.
-
-	  It doesn't make sense to have multiple instances of the same scene.
-	  So it's useful to make this a singleton;
-	 */
+	/// <summary>
+	/// Сцена. Определяет для WindowHandler, что отрисовывать.
+	/// Контролирует события нажатий.
+	/// { например - сцены: Главного меню, Игры, Паузы }
+	/// [ Сцены накрывают друг друга, не перерисовывая предыдущее отображение полностью ]
+	/// [ Может использоваться для вывода Всплывающих уведомлений ]
+	/// [ Используется только один объект одной сцены ]
+	/// </summary>
 	class Scene
 	{
 	public:
@@ -26,42 +21,103 @@ namespace core
 		Scene& operator=(const Scene&) = delete;
 		Scene& operator=(Scene&&) = delete;
 
-		// Provided for convenience
+		/// <summary>
+		/// Закрытие сцены
+		/// [ Предусмотрено для удобства ]
+		/// </summary>
 		static void quit()
 		{
 			WindowHandler::instance().quit();
 		}
+
+		/// <summary>
+		/// Перерисовать сцену
+		/// </summary>
 		static void redraw()
 		{
 			WindowHandler::instance().redraw();
 		}
+
+		/// <summary>
+		/// Перерисовать задний фон
+		/// </summary>
 		static void redrawBackground()
 		{
 			WindowHandler::instance().redrawBackground();
 		}
 
-		// Called when this scene gets selected
+		/// <summary>
+		/// Переопределяемая функция обратного вызова при запуске сцены
+		/// [ вызывается после onSelected() ]
+		/// </summary>
 		virtual void onStart() {}
 
 		// Called when this scene gets deselected or the window is closed
+
+		/// <summary>
+		/// Переопределяемая функция обратного вызова при закрытии сцены
+		/// </summary>
 		virtual void onStop() {}
 
+		/// <summary>
+		/// Переопределяемая функция обратного вызова при отрисовке сцены
+		/// </summary>
+		/// <param name="p">Область отрисовки</param>
 		virtual void onDraw(Paint& p) = 0;
+
+		/// <summary>
+		/// Переопределяемая функция обратного вызова при отрисовке заднего фона
+		/// </summary>
+		/// <param name="p">Область отрисовки</param>
 		virtual void onDrawBackground(Paint& p) = 0;
 
-		// Should return true if the key is captured
-		// Only used for comunication between the class and subclass
+		/// <summary>
+		/// Переопределяемая функция обратного вызова при вжатии клавиши
+		/// </summary>
+		/// <param name="'key'">Клавиша</param>
 		virtual void onKeyDown(char /*key*/) {}
+
+		/// <summary>
+		/// Переопределяемая функция обратного вызова при отжатии клавиши
+		/// </summary>
+		/// <param name="'key'"></param>
 		virtual void onKeyUp(char /*key*/) {}
 
+		/// <summary>
+		/// Переопределяемая функция обратного вызова при движении мыши
+		/// </summary>
+		/// <param name="'pos'">Позиция курсора</param>
 		virtual void onMouseMove(Point /*pos*/) {}
 
+		/// <summary>
+		/// Переопределяемая функция обратного вызова при ПКМ-отжатии
+		/// </summary>
+		/// <param name="'pos'"></param>
 		virtual void onRightMouseUp(Point /*pos*/) {}
+
+		/// <summary>
+		/// Переопределяемая функция обратного вызова при ПКМ-вжатии
+		/// </summary>
+		/// <param name="'pos'"></param>
 		virtual void onRightMouseDown(Point /*pos*/) {}
+
+		/// <summary>
+		/// Переопределяемая функция обратного вызова при ЛКМ-отжатии
+		/// </summary>
+		/// <param name="'pos'"></param>
 		virtual void onLeftMouseUp(Point /*pos*/) {}
+
+		/// <summary>
+		/// Переопределяемая функция обратного вызова при ЛКМ-вжатии
+		/// </summary>
+		/// <param name="'pos'"></param>
 		virtual void onLeftMouseDown(Point /*pos*/) {}
 
-		//gets called after onSelected
+		/// <summary>
+		/// Переопределяемая функция обратного вызова при смене размера окна
+		/// [ вызывается после onSelected() ]
+		/// </summary>
+		/// <param name="'newSize'"></param>
 		virtual void onSizeChanged(Point /*newSize*/) {}
 
 		virtual ~Scene() noexcept = default;

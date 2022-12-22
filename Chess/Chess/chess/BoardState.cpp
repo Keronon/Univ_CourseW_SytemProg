@@ -14,7 +14,7 @@ namespace chess
 		moveCounter = 1;
 		currentSide = Side::White;
 
-		enPassantTarget = Pos::Invalid;
+		passingTarget = Pos::Invalid;
 	}
 
 	void BoardState::update(const std::array<std::unique_ptr<Piece>, 64>& pieces)
@@ -62,6 +62,7 @@ namespace chess
 			}
 		}
 	}
+
 	GameResult BoardState::testWinOrStalemate(Side side) const
 	{
 		std::vector<Move> validMoves;
@@ -78,6 +79,7 @@ namespace chess
 		}
 		return isInCheck[side] ? GameResult::Win : GameResult::Stalemate;
 	}
+
 	bool BoardState::moveLeavesInCheck(Pos from, Pos to) const
 	{
 		auto* ptr = at(from);
@@ -94,6 +96,7 @@ namespace chess
 
 		return state.isInCheck[side];
 	}
+
 	std::string BoardState::getFEN() const
 	{
 		std::stringstream ss;
@@ -106,11 +109,13 @@ namespace chess
 		shortenedFenImpl(ss);
 		return ss.str();
 	}
+
 	std::ostream& operator<<(std::ostream& s, const BoardState& b)
 	{
 		b.shortenedFenImpl(s);
 		return s << ' ' << b.halfMoveClock << ' ' << b.moveCounter;
 	}
+
 	std::ostream& BoardState::shortenedFenImpl(std::ostream& s) const
 	{
 		// board pieces
@@ -147,13 +152,11 @@ namespace chess
 
 		s << ' ' << (currentSide == Side::White ? 'w' : 'b') << ' ';
 
-		// castling
-		auto kingCanCastle = [&](int x, int y)
+		auto kingCanCastle = [&](int x, int y) // ракировка
 		{
 			if (auto* ptr = at(x, y))
 			{
-				// We could not check for the type, but this way it more verbose
-				if (auto* king = dynamic_cast<const King*>(ptr))
+				if (auto* king = dynamic_cast<const King*>(ptr)) // проверка на Короля
 				{
 					return !king->getMadeFirstMove();
 				}
@@ -161,8 +164,7 @@ namespace chess
 			return false;
 		};
 
-		//returns true if we can castle with that rook and appends to string
-		auto rookCanCastle = [&](int x, int y, char c)
+		auto rookCanCastle = [&](int x, int y, char c) // return: true - если можно ракироваться с данной ладьёй. добавляет букву ракировки в поток вывода
 		{
 			if (auto* ptr = at(x, y))
 			{
@@ -177,7 +179,7 @@ namespace chess
 			}
 			return false;
 		};
-		//we could do it in a single if, but it's nicer like so
+
 		auto checkCastlingForSide = [&](int y, char q, char k) -> bool
 		{
 			if (kingCanCastle(4, y))
@@ -190,11 +192,9 @@ namespace chess
 		if (!checkCastlingForSide(0, 'Q', 'K') &&
 			!checkCastlingForSide(7, 'q', 'k'))
 		{
-			//if we can't do any castling we should add a '-'
-			s << '-';
+			s << '-'; // если ракировок нет
 		}
 
-		//en passant
-		return s << ' ' << enPassantTarget;
+		return s << ' ' << passingTarget; // пешка после широкого шага
 	}
-}// chess
+}

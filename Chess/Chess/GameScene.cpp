@@ -53,7 +53,7 @@ void GameScene::toggleShowingValidMoves()
 
 void GameScene::newGameImpl()
 {
-	cursor = { 4, 0 }; // the king
+	cursor = { 4, 0 }; // белый король
 
 	playerNames[chess::Side::White] = "Player 1";
 	playerNames[chess::Side::Black] = "Player 2";
@@ -82,6 +82,7 @@ void GameScene::drawBoard(Paint& paint) const
 	}
 	spriteOnBoard(paint, cursor, sprites::Cursor, sprites::CursorPalette);
 }
+
 void GameScene::moveVert(int dir)
 {
 	cursor.y() += dir;
@@ -92,12 +93,14 @@ void GameScene::moveVert(int dir)
 }
 
 bool GameScene::isSelected() const { return selectedPos.isValid(); }
+
 void GameScene::deselect()
 {
 	validMoves.clear();
 	selectedPos = chess::Pos::Invalid;
 	redraw();
 }
+
 bool GameScene::trySelect(chess::Pos pos)
 {
 	deselect();
@@ -129,6 +132,7 @@ void GameScene::spaceAction()
 	}
 	trySelect(cursor);
 }
+
 void GameScene::onLeftMouseDown(Point pt)
 {
 	if (getBoardRect().contains(pt))
@@ -154,6 +158,7 @@ void GameScene::onLeftMouseDown(Point pt)
 		redraw();
 	}
 }
+
 void GameScene::onLeftMouseUp(Point pt)
 {
 	if (pieceMovingData.onMouseMove(pt))
@@ -173,6 +178,7 @@ void GameScene::onLeftMouseUp(Point pt)
 		redraw();
 	}
 }
+
 void GameScene::onMouseMove(Point pt)
 {
 	if (pieceMovingData.onMouseMove(pt))

@@ -12,17 +12,19 @@ namespace core
 {
 	namespace textFormat
 	{
-		constexpr static auto Center =
-			DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_NOCLIP;
-
-		constexpr static auto MultilineCenter =
-			DT_CENTER | DT_NOCLIP;
+		constexpr static auto Center = DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_NOCLIP;
+		constexpr static auto MultilineCenter = DT_CENTER | DT_NOCLIP;
 	}
 
+	/// <summary>
+	/// Область отрисовки
+	/// </summary>
 	class Paint
 	{
 	public:
-		// Only to be used in WindowHandler
+		/// <summary>
+		/// Только для использования в WindowHandler
+		/// </summary>
 		class StretchData
 		{
 		public:
@@ -35,12 +37,12 @@ namespace core
 
 				constexpr SzRect() : x(0), y(0), w(0), h(0) {}
 				constexpr SzRect(int x, int y, int w, int h)
-					: x(x), y(y), w(w), h(h)
+					               : x(x), y(y), w(w), h(h)
 				{}
 
 				constexpr Point p0() const { return { x, y }; }
-				constexpr int x1() const { return x + w; }
-				constexpr int y1() const { return y + h; }
+				constexpr int   x1() const { return x + w; }
+				constexpr int   y1() const { return y + h; }
 			};
 
 			StretchData(Point size, bool shouldVal);
@@ -84,7 +86,8 @@ namespace core
 		void copyToStretched(HDC dst, const StretchData& stretchData) const;
 		void copyTo(Paint& dst) const;
 
-		/* because textOut(x, y,s) calls textOut(p, s);
+		/*
+		   because textOut(x, y, s) calls textOut(p, s);
 		   it's better to not use a const Point&
 
 		   less assembly instructions:
@@ -152,4 +155,4 @@ namespace core
 		void setPixelUnchecked(uint8_t* ptr, Color col);
 		void setPixelUnchecked(int x, int y, Color col);
 	};
-} // namespace core
+}

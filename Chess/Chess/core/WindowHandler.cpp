@@ -9,11 +9,9 @@ namespace core
 {
 	WindowHandler* WindowHandler::theInstance = nullptr;
 
-	int WindowHandler::run(Point size, const char* title,
-		Scene& initialScene, int nCmdShow)
+	int WindowHandler::run(Point size, const char* title, Scene& initialScene, int nCmdShow)
 	{
-		HWND hwnd = createWindow(title, Rect({ 0, 0 }, size),
-			PFD_TYPE_RGBA, PFD_DOUBLEBUFFER);
+		HWND hwnd = createWindow(title, Rect({ 0, 0 }, size), PFD_TYPE_RGBA, PFD_DOUBLEBUFFER);
 		WindowDC dc(hwnd);
 		WindowHandler wh(title, initialScene, size, hwnd, dc);
 		::ShowWindow(hwnd, nCmdShow);
@@ -27,42 +25,35 @@ namespace core
 		}
 		return (int)msg.wParam;
 	}
-	WindowHandler::WindowHandler(const char* title, Scene& scene,
-		Point size, HWND hwnd, const WindowDC& dc)
-		: currentScene(&scene), title(title), hwnd(hwnd),
-		background(dc, size), foreground(dc, size),
-		windowMode(WindowMode::Resizeable),
-		stretchData(size, true)
+
+	WindowHandler::WindowHandler(const char* title, Scene& scene, Point size, HWND hwnd, const WindowDC& dc)
+		: currentScene(&scene), title(title), hwnd(hwnd), background(dc, size), foreground(dc, size),
+		  windowMode(WindowMode::Resizeable), stretchData(size, true)
 	{
 		if (theInstance != nullptr)
 		{
-			throw std::logic_error("Multiple instances of WindowHandler "
-				"aren't allowed");
+			throw std::logic_error("Multiple instances of WindowHandler aren't allowed");
 		}
 		theInstance = this;
 		scene.onStart();
 		updateSize();
 	}
 
-	void modifyStyle(HWND hwnd, DWORD dwStyle, Rect rect,
-		UINT uFlags = SWP_NOMOVE | SWP_NOZORDER | SWP_FRAMECHANGED)
+	void modifyStyle(HWND hwnd, DWORD dwStyle, Rect rect, UINT uFlags = SWP_NOMOVE | SWP_NOZORDER | SWP_FRAMECHANGED)
 	{
 		::ShowWindow(hwnd, SW_HIDE);
 
 		if (!::SetWindowLongPtrA(hwnd, GWL_STYLE, dwStyle))
 			throw WinapiError("SetWindowLongPtr");
 
-		if (!::SetWindowPos(hwnd, HWND_TOP, rect.x0(), rect.y0(),
-			rect.width(), rect.height(), uFlags))
+		if (!::SetWindowPos(hwnd, HWND_TOP, rect.x0(), rect.y0(), rect.width(), rect.height(), uFlags))
 			throw WinapiError("SetWindowPos");
 
 		::ShowWindow(hwnd, SW_SHOW);
 	}
 
 	constexpr DWORD ResizeableStyle = WS_OVERLAPPEDWINDOW;
-	constexpr DWORD StaticStyle =
-		WS_OVERLAPPED | WS_CAPTION |
-		WS_SYSMENU | WS_MINIMIZEBOX;
+	constexpr DWORD StaticStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
 
 	void WindowHandler::setWindowMode(WindowMode val)
 	{
@@ -94,6 +85,7 @@ namespace core
 	{
 		foreground.getSnapshot(snap);
 	}
+
 	void WindowHandler::setSnapshot(const std::vector<uint8_t>& snap)
 	{
 		background.setSnapshot(snap);
@@ -105,12 +97,11 @@ namespace core
 		redrawBackground();
 	}
 
-	// As using GetWindowTextA is requires a string size
-	// we are better just using a variable
 	const std::string& WindowHandler::getTitle() const
 	{
 		return title;
 	}
+
 	void WindowHandler::setTitle(const std::string& val)
 	{
 		::SetWindowTextA(hwnd, val.c_str());
@@ -121,11 +112,12 @@ namespace core
 	{
 		return Rect::getClientRect(hwnd).size();
 	}
+
 	void WindowHandler::setSize(Point val)
 	{
 		auto r = Rect::getClientRect(hwnd);
-		//repaint = false because we want to do things in our order
-		if (!::MoveWindow(hwnd, r.x0(), r.y0(), val.x, val.y, false))
+
+		if (!::MoveWindow(hwnd, r.x0(), r.y0(), val.x, val.y, false)) // repaint = false, т.к. лучше лично управлять перерисовкой
 		{
 			throw WinapiError("MoveWindow");
 		}
@@ -143,6 +135,7 @@ namespace core
 	{
 		::InvalidateRect(hwnd, nullptr, false /*erase*/);
 	}
+
 	void WindowHandler::redrawBackground()
 	{
 		currentScene->onDrawBackground(background);
@@ -165,8 +158,7 @@ namespace core
 		return stretchData.dstToSrcCoord(p);
 	}
 
-	LRESULT CALLBACK WindowHandler::eventHandler(HWND hWnd, UINT uMsg,
-		WPARAM wParam, LPARAM lParam)
+	LRESULT CALLBACK WindowHandler::eventHandler(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		PAINTSTRUCT ps;
 		switch (uMsg)
@@ -185,8 +177,7 @@ namespace core
 			}
 			case WM_SIZE:
 			{
-				// We're not minimized
-				if (lParam != 0)
+				if (lParam != 0) // Окно не свёрнуто
 				{
 					instance().stretchData.updateSize({ LOWORD(lParam), HIWORD(lParam) });
 					instance().redraw();
@@ -223,11 +214,10 @@ namespace core
 	}
 
 	template<size_t Width, size_t Height, const char CP[]>
-	HICON createIcon(const ConstPaletteSprite<Width, Height, CP>& sprite,
-		const ConstPalette<CP>& palette)
+	HICON createIcon(const ConstPaletteSprite<Width, Height, CP>& sprite, const ConstPalette<CP>& palette)
 	{
 		ICONINFO info;
-		info.fIcon = true; //We don't want a cursor
+		info.fIcon = true; // Необходим отдельный контроль курсора
 		std::array<uint32_t, Width* Height> data;
 
 		constexpr auto toInt = [](Color c)
@@ -243,22 +233,23 @@ namespace core
 				data[z++] = toInt(palette[sprite.at(i, j)]);
 			}
 		}
+
 		struct RaiiBitmap
 		{
 			HBITMAP val;
 			RaiiBitmap(int width, int height,
-				UINT planes,
-				UINT bitCount,
-				const void* data)
+				       UINT planes, UINT bitCount,
+				       const void* data)
 			{
 				val = ::CreateBitmap(width, height, planes, bitCount, data);
 				if (!val)
 					throw WinapiError("CreateBitmap");
 			}
+
 			operator HBITMAP() const { return val; }
+
 			~RaiiBitmap()
 			{
-				//should be fine without check for failure
 				::DeleteObject(val);
 			}
 		};
@@ -266,13 +257,10 @@ namespace core
 		RaiiBitmap col = RaiiBitmap(Width, Height, 1, 32, data.data());
 		RaiiBitmap mask = RaiiBitmap(Width, Height, 1, 1, nullptr);
 
-		// We can't inline those because it'll get destroyed imediately
-		// (ie info.hbmColor = RaiiBitmap(...))
 		info.hbmColor = col;
 		info.hbmMask = mask;
 		HICON res = ::CreateIconIndirect(&info);
-		if (res == nullptr)
-			throw WinapiError("CreateIconIndirect");
+		if (res == nullptr) throw WinapiError("CreateIconIndirect");
 
 		return res;
 	}
@@ -281,11 +269,9 @@ namespace core
 		BYTE type, DWORD flags)
 	{
 		HINSTANCE hInstance = ::GetModuleHandle(nullptr);
-		if (hInstance == nullptr)
-			throw WinapiError("GetModuleHandle()");
+		if (hInstance == nullptr) throw WinapiError("GetModuleHandle()");
 		WNDCLASSW wc;
 
-		// Making this with more colors looks bad
 		ConstPalette<sprites::CharPalette> iconPalette = {
 			core::Color::Clear,
 			core::Color::Black,
@@ -343,4 +329,4 @@ namespace core
 		}
 		return hwnd;
 	}
-} // namespace core
+}

@@ -11,7 +11,7 @@ namespace core
 	*/
 	struct RectGroup
 	{
-		using Sizes = std::initializer_list<Point>;
+		using Sizes  = std::initializer_list<Point>;
 		using Spaces = std::initializer_list<int>;
 
 		std::vector<Rect> val;
@@ -85,22 +85,18 @@ namespace core
 		  |                |
 		  +----------------+
 		*/
-		void updateCenteredHori(Rect parent, Sizes sizes, Spaces spaces,
-			Point margins);
+		void updateCenteredHori(Rect parent, Sizes sizes, Spaces spaces, Point margins);
 
-		void updateCenteredHori(Rect parent, Sizes sizes, Spaces spaces,
-			int margin = 0)
+		void updateCenteredHori(Rect parent, Sizes sizes, Spaces spaces, int margin = 0)
 		{
 			updateCenteredHori(parent, sizes, spaces, { margin, margin });
 		}
 
-		void updateCenteredHori(Rect parent, Point size1, Point size2,
-			int space, Point margins)
+		void updateCenteredHori(Rect parent, Point size1, Point size2, int space, Point margins)
 		{
 			updateCenteredHori(parent, { size1, size2 }, { space }, margins);
 		}
-		void updateCenteredHori(Rect parent, Point size1, Point size2,
-			int space = 0, int margin = 0)
+		void updateCenteredHori(Rect parent, Point size1, Point size2, int space = 0, int margin = 0)
 		{
 			updateCenteredHori(parent, size1, size2, space, { margin, margin });
 		}
@@ -120,24 +116,21 @@ namespace core
 		  +-----------+
 		*/
 
-		void updateCenteredVert(Rect parent, Sizes sizes, Spaces spaces,
-			Point margins);
+		void updateCenteredVert(Rect parent, Sizes sizes, Spaces spaces, Point margins);
 
-		void updateCenteredVert(Rect parent, Sizes sizes, Spaces spaces,
-			int margin = 0)
+		void updateCenteredVert(Rect parent, Sizes sizes, Spaces spaces, int margin = 0)
 		{
 			updateCenteredVert(parent, sizes, spaces, { margin, margin });
 		}
 
-		void updateCenteredVert(Rect parent, Point size1, Point size2,
-			int space, Point margins)
+		void updateCenteredVert(Rect parent, Point size1, Point size2, int space, Point margins)
 		{
 			updateCenteredVert(parent, { size1, size2 }, { space }, margins);
 		}
-		void updateCenteredVert(Rect parent, Point size1, Point size2,
-			int space = 0, int margin = 0)
+
+		void updateCenteredVert(Rect parent, Point size1, Point size2, int space = 0, int margin = 0)
 		{
 			updateCenteredVert(parent, size1, size2, space, { margin, margin });
 		}
 	};
-} // namespace core
+}

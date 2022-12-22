@@ -65,8 +65,7 @@ namespace core
 			{
 				if (r.contains(pos))
 				{
-					setMouseCursor(i);
-					// Assume they don't overlap
+					setMouseCursor(i); // Предполагается, что кнопки не перекрывают друг друга
 					return;
 				}
 				++i;
@@ -86,7 +85,7 @@ namespace core
 		}
 	}
 
-	void ButtonSelectorScene::onButtonMove(int index, int delta)
+	void ButtonSelectorScene::onButtonFocusMove(int index, int delta)
 	{
 		if (mode == Mode::Vertical && delta > 0) onButtonSelected(index);
 	}
@@ -99,7 +98,7 @@ namespace core
 		}
 		if (btnMode != mode)
 		{
-			onButtonMove(keyboardCursor, delta);
+			onButtonFocusMove(keyboardCursor, delta);
 			return;
 		}
 		keyboardCursor += delta;

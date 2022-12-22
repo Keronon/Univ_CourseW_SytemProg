@@ -4,6 +4,9 @@
 
 using namespace core;
 
+/// <summary>
+/// Список кнопок на сцене
+/// </summary>
 enum Button : int
 {
 	Back = 0,
@@ -25,9 +28,7 @@ OptionsScene::OptionsScene()
 			ButtonData::makeRadio("Show valid moves",
 								  GameScene::getShowingValidMoves),
 			ButtonData::makeRadio("Is Resizeable", getIsResizeable),
-		},
-		Mode::Vertical),
-		rects(2)
+		}, Mode::Vertical), rects(2)
 {}
 
 void OptionsScene::load(Callback onBack)
@@ -41,8 +42,7 @@ void OptionsScene::onSizeChanged(core::Point size)
 	constexpr Point titleSize{ 580, 130 };
 
 	constexpr int spacing = 10;
-	rects.updateCenteredVert(size.asRect(), titleSize,
-		getVertButtonsSize(BtnCount), spacing, { 10, 20 });
+	rects.updateCenteredVert(size.asRect(), titleSize, getVertButtonsSize(BtnCount), spacing, { 10, 20 });
 	updateVertSizes(rects[1]);
 }
 

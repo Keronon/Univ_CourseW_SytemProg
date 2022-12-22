@@ -6,6 +6,9 @@
 
 using namespace core;
 
+/// <summary>
+/// Список кнопок на сцене
+/// </summary>
 enum Button : int
 {
 	Continue = 0,

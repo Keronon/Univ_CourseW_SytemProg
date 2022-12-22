@@ -15,8 +15,7 @@ void PromotionScene::onPromotion(chess::Side side)
 	SceneManager::load<PromotionScene>();
 }
 
-PromotionScene::PromotionScene()
-	: ButtonSelectorScene(4, Mode::Horizontal), rects(2)
+PromotionScene::PromotionScene() : ButtonSelectorScene(4, Mode::Horizontal), rects(2)
 {}
 
 void PromotionScene::onSizeChanged(Point size)
@@ -27,8 +26,7 @@ void PromotionScene::onSizeChanged(Point size)
 	constexpr int textWidth = 80 + 4 * SquareLength;
 	constexpr int squaresWidth = 4 * SquareLength + 3 * SquareSpacing;
 	rects.updateCenteredVert(GameScene::getBoardRect(size),
-		{ textWidth, topTextHeight },
-		{ squaresWidth, SquareLength }, spacing, margins);
+		{ textWidth, topTextHeight }, { squaresWidth, SquareLength }, spacing, margins);
 	getButtonRects().updateEquallySpacedHori(rects[1], SquareSize);
 }
 
@@ -57,6 +55,7 @@ void PromotionScene::drawMouse(Paint& p, const Rect& rect)
 	p.fillRect(rect, ButtonHighlightCol);
 	p.drawRectIn(rect, 1, MarginCol);
 }
+
 void PromotionScene::drawKeyboard(Paint& p, const Rect& rect)
 {
 	p.drawSprite(rect.p0(), sprites::Cursor, sprites::CursorPalette, 2);

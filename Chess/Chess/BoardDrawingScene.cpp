@@ -16,7 +16,7 @@ void BoardDrawingScene::onSizeChanged(Point size)
 	{
 		if (lastBadSize != size)
 		{
-			warning("Window size too small");
+			warning("Слишком маленькое окно");
 			lastBadSize = size;
 		}
 	}
@@ -32,6 +32,7 @@ core::Point BoardDrawingScene::boardPosToScreen(chess::Pos boardPos) const
 		boardPos.y() = 7 - boardPos.y();
 	return boardStart() + boardPos * SquareLength;
 }
+
 chess::Pos BoardDrawingScene::screenToBoardPos(core::Point pt) const
 {
 	auto pos = (pt - boardStart()) / SquareLength;
@@ -95,23 +96,29 @@ void BoardDrawingScene::onDrawBackground(Paint& p)
 	drawBoardSquares(p);
 	drawBoardMarkings(p);
 }
+
 void BoardDrawingScene::drawRightPaneInfo(Paint& p) const
 {
 	p.setTextColor(MenuTextCol);
 	int textHeight = 32;
 	int offset = MarginSize;
-	Rect rect1{
+
+	Rect rect1
+	{
 		paneRect.left + MarginSize,
 		paneRect.top + offset,
 		paneRect.right - MarginSize,
 		paneRect.top + textHeight + offset,
 	};
-	Rect rect2{
+
+	Rect rect2
+	{
 		paneRect.left + MarginSize,
 		paneRect.bottom - textHeight - offset,
 		paneRect.right - MarginSize,
 		paneRect.bottom - offset,
 	};
+
 	auto topSide = getOtherSide(getPlayerSide());
 	auto botSide = getPlayerSide();
 	auto& currentRect = getBoard().getCurrentSide() == topSide ? rect1 : rect2;
@@ -132,7 +139,6 @@ void BoardDrawingScene::drawRightPaneInfo(Paint& p) const
 }
 void BoardDrawingScene::drawEatenPieces(Paint& p) const
 {
-	// making the sprites slightly overlap looks good
 	constexpr int pieceSize     = 30;
 	constexpr int fullPieceSize = 32;
 	constexpr int lineSpacing   = 28;
@@ -151,7 +157,7 @@ void BoardDrawingScene::drawEatenPieces(Paint& p) const
 			p.drawSprite(pos, piece.getSprite(), piece.getPalette());
 		}
 
-		// ! for check-positioning
+		// ! для шахматного расположения иконок
 		// ! start += Point(pieceSize / 2, lineSpacing);
 		start += Point(0, lineSpacing);
 		int i = 0;
@@ -214,7 +220,7 @@ void BoardDrawingScene::PieceMovingData::setInterpolatedMove(chess::FullMove mov
 	interp.to = parent.boardPosToScreen(move.to);
 	state = State::Interpolating;
 
-	piecePos = move.to; // this is where the piece is now
+	piecePos = move.to; // текущая позиция фигуры
 
 	t0 = std::chrono::system_clock::now();
 }
@@ -251,6 +257,7 @@ void BoardDrawingScene::PieceMovingData::setMousePos(Point p, chess::Pos boardPo
 	piecePos = boardPos;
 	mouse.offset = p;
 }
+
 bool BoardDrawingScene::PieceMovingData::onMouseMove(Point p)
 {
 	auto val = state == State::MouseMoving;
@@ -260,6 +267,7 @@ bool BoardDrawingScene::PieceMovingData::onMouseMove(Point p)
 	}
 	return val;
 }
+
 void BoardDrawingScene::PieceMovingData::onLeftMouseUp()
 {
 	if (state == State::MouseMoving)
@@ -268,30 +276,33 @@ void BoardDrawingScene::PieceMovingData::onLeftMouseUp()
 		piecePos = chess::Pos::Invalid;
 	}
 }
+
 void BoardDrawingScene::PieceMovingData::stop()
 {
 	state = State::NotMoving;
 	piecePos = chess::Pos::Invalid;
 }
+
 void BoardDrawingScene::spriteAt(core::Paint& paint, core::Point pt,
-	const core::PaletteSprite& s,
-	const core::Palette& palette) const
+	                             const core::PaletteSprite& s, const core::Palette& palette) const
 {
 	size_t scale = SquareLength / s.width();
 	paint.drawSprite(pt, s, palette, scale);
 }
+
 void BoardDrawingScene::spriteOnBoard(core::Paint& paint, chess::Pos p,
-	const core::PaletteSprite& s,
-	const core::Palette& palette) const
+	                                  const core::PaletteSprite& s, const core::Palette& palette) const
 {
 	spriteAt(paint, boardPosToScreen(p), s, palette);
 }
 
 Rect BoardDrawingScene::getBoardRect(Point size)
 {
-	Point start{
+	Point start
+	{
 		(size.x - SquareLength * 8 - RightPaneWidth - RightPaneMargin) / 2,
 		(size.y - SquareLength * 8) / 2,
 	};
+
 	return { start, start + SquareSize * 8 };
 }

@@ -11,6 +11,9 @@
 
 using namespace core;
 
+/// <summary>
+/// Список кнопок на сцене
+/// </summary>
 enum Button : int
 {
 	Play = 0,
@@ -39,8 +42,7 @@ void MainMenuScene::onSizeChanged(core::Point size)
 
 	constexpr int spacing = 10;
 	rects.updateCenteredVert(size.asRect(), titleSize,
-		getVertButtonsSize(BtnCount), spacing,
-		{ 10, 20 });
+		                     getVertButtonsSize(BtnCount), spacing, { 10, 20 });
 	updateVertSizes(rects[1]);
 }
 
@@ -56,15 +58,16 @@ void MainMenuScene::onDrawBackground(core::Paint& p)
 
 	MenuScene::onDrawBackground(p);
 }
+
 void MainMenuScene::onDrawExtra(Paint& p)
 {
-	// side
 	auto rect = getButtonRect(Button::Play);
 
 	auto& sprite = sprites::King;
 	auto pt = rect.p1() - (rect.height() * Point { 1, 1 } - sprite.size() / 2);
 	p.drawSprite(pt, sprite, chess::Piece::getPalette(side));
 }
+
 void MainMenuScene::onButtonSelected(int index)
 {
 	MenuScene::onButtonSelected(index);

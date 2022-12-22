@@ -12,56 +12,57 @@ namespace chess
 	bool Piece::ValidMovesHandler::tryAdd(Pos pos)
 	{
 		if (!pos.isValid())
-			return true;
+			return false;
 
 		auto* ptr = b.at(pos);
 		if (ptr && ptr->getSide() == side)
-			return true;
+			return false;
 
 		add(pos);
-		return ptr != nullptr;
+		return ptr == nullptr;
 	}
 
 	void Piece::ValidMovesHandler::addDiagonals()
 	{
 		for (int i = 1; i < 8; ++i)
 		{
-			if (tryAdd(pos + Pos(i, i))) break;
+			if (!tryAdd(pos + Pos(i, i))) break;
 		}
 
 		for (int i = 1; i < 8; ++i)
 		{
-			if (tryAdd(pos - Pos(i, i))) break;
+			if (!tryAdd(pos - Pos(i, i))) break;
 		}
 
 		for (int i = 1; i < 8; ++i)
 		{
-			if (tryAdd(pos + Pos(-i, i))) break;
+			if (!tryAdd(pos + Pos(-i, i))) break;
 		}
 
 		for (int i = 1; i < 8; ++i)
 		{
-			if (tryAdd(pos + Pos(i, -i))) break;
+			if (!tryAdd(pos + Pos(i, -i))) break;
 		}
 	}
+
 	void Piece::ValidMovesHandler::addHorizontalAndVertical()
 	{
 		for (int i = pos.x() + 1; i < 8; ++i)
 		{
-			if (tryAdd({ i, pos.y() })) break;
+			if (!tryAdd({ i, pos.y() })) break;
 		}
 		for (int i = pos.x() - 1; i >= 0; --i)
 		{
-			if (tryAdd({ i, pos.y() })) break;
+			if (!tryAdd({ i, pos.y() })) break;
 		}
 
 		for (int i = pos.y() + 1; i < 8; ++i)
 		{
-			if (tryAdd({ pos.x(), i })) break;
+			if (!tryAdd({ pos.x(), i })) break;
 		}
 		for (int i = pos.y() - 1; i >= 0; --i)
 		{
-			if (tryAdd({ pos.x(), i })) break;
+			if (!tryAdd({ pos.x(), i })) break;
 		}
 	}
 
@@ -77,6 +78,7 @@ namespace chess
 		}
 		validMoves = res;
 	}
+
 	void Piece::getValidMovesDontTestCheck(Pos pos, const BoardState& b,
 		std::vector<Move>& res) const
 	{
@@ -139,17 +141,17 @@ namespace chess
 			vmh.tryAdd(vmh.pos + p);
 	}
 
-	void Pawn::getValidMoves(ValidMovesHandler vmh) const
+	void Pawn::getValidMoves(ValidMovesHandler validMovesH) const
 	{
 		auto addCheckPromotion = [&](Pos pos, Move::Type t = Move::Type::Normal)
 		{
 			if (pos.y() == 0 || pos.y() == 7)
 			{
-				vmh.add(pos, Move::Type::Promotion);
+				validMovesH.add(pos, Move::Type::Promotion);
 			}
 			else
 			{
-				vmh.add(pos, t);
+				validMovesH.add(pos, t);
 			}
 		};
 		auto tryAddStraight = [&](Pos pos, Move::Type t = Move::Type::Normal)
@@ -157,14 +159,14 @@ namespace chess
 			if (!pos.isValid())
 				return false;
 
-			if (vmh.b.at(pos) != nullptr)
+			if (validMovesH.b.at(pos) != nullptr)
 				return false;
 
 			addCheckPromotion(pos, t);
 			return true;
 		};
 		int sgn = getSide() == Side::White ? 1 : -1;
-		auto myPos = vmh.pos;
+		auto myPos = validMovesH.pos;
 		bool canMoveForward = tryAddStraight(myPos + Pos(0, sgn));
 
 		if (canMoveForward && !getMadeFirstMove())
@@ -172,31 +174,27 @@ namespace chess
 			tryAddStraight(myPos + Pos(0, 2 * sgn), Move::Type::DoubleAdvance);
 		}
 
-		//check for eating
-		for (int i : {-1, 1})
+		for (int i : {-1, 1}) // проверка на съедение
 		{
 			auto pos = myPos + Pos(i, sgn);
-			if (!pos.isValid())
-				continue;
+			if (!pos.isValid()) continue;
 
-			const auto& ptr = vmh.b.at(pos);
+			const auto& ptr = validMovesH.b.at(pos);
 			if (ptr != nullptr && ptr->getSide() != getSide())
 				addCheckPromotion(pos);
 		}
 
-		//check for en passant
-		for (int i : {-1, 1})
+		for (int i : {-1, 1}) // проверка пешек после широкого шага
 		{
 			auto pos = myPos + Pos(i, 0);
 			if (!pos.isValid())
 				continue;
-			auto* ptr = vmh.b.at(pos);
+			auto* ptr = validMovesH.b.at(pos);
 			if (ptr == nullptr || ptr->getSide() == getSide())
-				if (vmh.b.getEnPassantTarget() == pos)
+				if (validMovesH.b.getPassingTarget() == pos)
 				{
-					//It can't be a promotion and a en passant at the same time
-					vmh.add(myPos + Pos(i, sgn), Move::Type::EnPassant);
+					validMovesH.add(myPos + Pos(i, sgn), Move::Type::Passing); // не может быть широкого шага и превращения одновременно
 				}
 		}
 	}
-} //namespace chess
+}

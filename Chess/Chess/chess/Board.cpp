@@ -71,15 +71,13 @@ namespace chess
 		}
 		std::clog << state << "\n";
 
-		// 50 half moves = 100 moves
-		if (state.halfMoveClock >= 100)
-			drawCallback(move, "Fifty-move rule");
+		if (state.halfMoveClock >= 100) drawCallback(move, "Правило 50-и ходов"); // 50 moves = 100 half-moves
 
 		auto count = ++boardHistory[state.getShortenedFEN()];
 
 		if (count == 3)
 		{
-			drawCallback(move, "Threefold repetition");
+			drawCallback(move, "Тройное повторение");
 		}
 		moveHistory.push_back(move);
 		state.incrementHalfMove();
@@ -186,18 +184,18 @@ namespace chess
 		if (dynamic_cast<const Pawn*>(ptr.get()) != nullptr)
 			state.halfMoveClock = 0;
 
-		if (it->type != Move::Type::EnPassant)
-			state.enPassantTarget = Pos::Invalid;
+		if (it->type != Move::Type::Passing)
+			state.passingTarget = Pos::Invalid;
 
 		switch (it->type)
 		{
 			case Move::Type::DoubleAdvance:
 			{
-				state.enPassantTarget = to;
+				state.passingTarget = to;
 			} break;
-			case Move::Type::EnPassant:
+			case Move::Type::Passing:
 			{
-				eatAt(state.enPassantTarget);
+				eatAt(state.passingTarget);
 			} break;
 			case Move::Type::Promotion:
 				promotionMove = move;
@@ -225,4 +223,4 @@ namespace chess
 
 		return true;
 	}
-} // namespace chess
+}

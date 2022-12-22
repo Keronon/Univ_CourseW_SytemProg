@@ -81,11 +81,10 @@ namespace core
 
 		res.boundingRect = Rect::fromMiddleAndSize(mid, boundsSize);
 
-		// Initializer_lists don't have random access, so we use iterators
-		auto spaceIt = spaces.begin();
-		auto sizeIt = sizes.begin();
-		auto it = res.val.begin();
-		auto last = res.val.end() - 1;
+		auto spaceIt = spaces.begin(); // Initializer_lists без прямого доступа, так что нужно использовать итераторы
+		auto sizeIt  = sizes.begin();
+		auto it      = res.val.begin();
+		auto last    = res.val.end() - 1;
 
 		for (;; ++spaceIt, ++sizeIt, ++it)
 		{
@@ -128,4 +127,4 @@ namespace core
 	{
 		centeredImpl<true>(*this, parent, sizes, spaces, margins);
 	}
-} // namespace core
+}

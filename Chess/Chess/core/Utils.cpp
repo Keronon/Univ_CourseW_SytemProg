@@ -9,8 +9,8 @@ namespace core
 		const source_location& location)
 	{
 		std::stringstream ss;
-		ss << location.file_name() << "@" << location.line() << ":"
-			<< location.function_name() << ": " << str;
+		ss << location.file_name()     << "@"  << location.line() << ":"
+		   << location.function_name() << ": " << str;
 		code = ::GetLastError();
 
 		char* msg = nullptr;
@@ -28,4 +28,4 @@ namespace core
 		}
 		return ss.str();
 	}
-} // namespace core
+}

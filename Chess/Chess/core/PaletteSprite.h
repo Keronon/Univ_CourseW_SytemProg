@@ -30,11 +30,15 @@ namespace core
 			return out << "}";
 		}
 	};
-	// First color is reserved for transparency
+
+	/// <summary>
+	/// Палитра цветов
+	/// [ Первый цвет оставить под 'Прозрачный' ]
+	/// </summary>
 	class Palette
 	{
 	public:
 		constexpr Palette() = default;
 		virtual Color operator[](uint8_t) const = 0;
 	};
-} // namespace core
+}
