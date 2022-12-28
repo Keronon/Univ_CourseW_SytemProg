@@ -116,8 +116,6 @@ namespace core
 
 		static HWND createWindow(const char* title, Rect rect, BYTE type, DWORD flags);
 
-	private:
-
 		static WindowHandler* theInstance;
 
 		Scene* currentScene;

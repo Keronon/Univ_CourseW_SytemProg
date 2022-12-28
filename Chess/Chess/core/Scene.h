@@ -52,8 +52,6 @@ namespace core
 		/// </summary>
 		virtual void onStart() {}
 
-		// Called when this scene gets deselected or the window is closed
-
 		/// <summary>
 		/// Переопределяемая функция обратного вызова при закрытии сцены
 		/// </summary>
@@ -122,4 +120,4 @@ namespace core
 
 		virtual ~Scene() noexcept = default;
 	};
-} // namespace core
+}

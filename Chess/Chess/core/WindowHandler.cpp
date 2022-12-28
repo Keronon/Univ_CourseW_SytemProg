@@ -11,7 +11,7 @@ namespace core
 
 	int WindowHandler::run(Point size, const char* title, Scene& initialScene, int nCmdShow)
 	{
-		HWND hwnd = createWindow(title, Rect({ 0, 0 }, size), PFD_TYPE_RGBA, PFD_DOUBLEBUFFER);
+		HWND hwnd = createWindow(title, Rect({ 300, 200 }, size), PFD_TYPE_RGBA, PFD_DOUBLEBUFFER);
 		WindowDC dc(hwnd);
 		WindowHandler wh(title, initialScene, size, hwnd, dc);
 		::ShowWindow(hwnd, nCmdShow);
